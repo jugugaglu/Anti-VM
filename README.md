@@ -105,7 +105,9 @@ ANTI-VM/
 ├── .cargo/
 │   └── config.toml          # Static CRT linking config
 ├── src/
-│   ├── main.rs              # Loader logic
+│   ├── main.rs              # Entry point
+│   ├── hardware.rs          # Hardware detection logic
+│   ├── payload.rs           # Payload decryption & execution
 │   └── chunks.rs            # Auto-generated (don't commit)
 ├── test_payload/            # Example payload
 │   ├── src/

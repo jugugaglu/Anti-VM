@@ -110,7 +110,9 @@ ANTI-VM/
 ├── .cargo/
 │   └── config.toml          # 정적 CRT 링크 설정
 ├── src/
-│   ├── main.rs              # 로더 로직
+│   ├── main.rs              # 진입점
+│   ├── hardware.rs          # 하드웨어 감지 로직
+│   ├── payload.rs           # 페이로드 복호화 및 실행
 │   └── chunks.rs            # 자동 생성 (커밋하지 말 것)
 ├── test_payload/            # 예제 페이로드
 │   ├── src/
