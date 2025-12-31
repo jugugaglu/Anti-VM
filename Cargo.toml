@@ -1,7 +1,8 @@
 [package]
-name = "perfect_stealth_loader"
+name = "ANTI-VM-loader"
 version = "0.1.0"
 edition = "2021"
+authors = ["uzokingkong"]
 
 [dependencies]
 windows = { version = "0.52", features = [

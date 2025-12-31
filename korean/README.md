@@ -93,7 +93,7 @@ cargo build --release
 
 최종 로더는 다음 위치에 생성됩니다:
 ```
-target\x86_64-pc-windows-msvc\release\perfect_stealth_loader.exe
+target\x86_64-pc-windows-msvc\release\ANTI-VM-loader.exe
 ```
 
 ### 프로젝트 구조

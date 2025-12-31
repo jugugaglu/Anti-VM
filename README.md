@@ -89,7 +89,7 @@ cargo build --release
 
 The final loader will be at:
 ```
-target\x86_64-pc-windows-msvc\release\perfect_stealth_loader.exe
+target\x86_64-pc-windows-msvc\release\ANTI-VM-loader.exe
 ```
 
 ### Project Structure
